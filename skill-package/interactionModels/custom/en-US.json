@@ -1,7 +1,8 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "hello world",
+            
+            "invocationName": "Stallions Offense",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -16,16 +17,19 @@
                     "samples": []
                 },
                 {
-                    "name": "HelloWorldIntent",
-                    "slots": [],
+                    "name": "RouteLookupIntent",
+                    "slots": [
+                        {
+                            "name": "routeNumber",
+                            "type": "AMAZON.NUMBER"
+                        },
+                        {
+                            "name": "routeDepth",
+                            "type": "AMAZON.NUMBER"
+                        }
+                    ],
                     "samples": [
-                        "hello",
-                        "how are you",
-                        "say hi world",
-                        "say hi",
-                        "hi",
-                        "say hello world",
-                        "say hello"
+                        "Greater Boston Stallions"
                     ]
                 },
                 {
