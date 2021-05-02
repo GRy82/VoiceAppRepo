@@ -29,7 +29,28 @@
                         }
                     ],
                     "samples": [
-                        "Greater Boston Stallions"
+                        "What is {routeNumber}",
+                        "What is a {routeNumber}",
+                        "What is route {routeNumber}",
+                        "What is route number {routeNumber}",
+                        "Tell me route number {routeNumber}",
+                        "Tell me route {routeNumber}",
+                        "Tell me what route {routeNumber} is",
+                        "Tell me what route number {routeNumber} is",
+                        "Give me route number {routeNumber}",
+                        "Give me route {routeNumber}",
+                        "Give me {routeNumber}",
+                        "Get {routeNumber}",
+                        "Get route {routeNumber}",
+                        "Get me {routeNumber}",
+                        "Get me route {routeNumber}",
+                        "Lookup route number {routeNumber}",
+                        "Lookup route {routeNumber}",
+                        "Lookup {routeNumber}",
+                        "Which one is {routeNumber}",
+                        "Which one is route {routeNumber}",
+                        "Which route is {routeNumber}",
+                        "Which is {routeNumber}"
                     ]
                 },
                 {

@@ -8,3 +8,6 @@ The implementation of a voice app that interacts with a user on the basis of a s
 
 ### Nonspecific
 It is conceivable that more custom intents could be added in the future. For this reason, it is better that the invocation represents something less specific than something like 'Stallions Route Tree' for instance.
+
+## Sample Utterances
+Given the repetitive nature of the sample utterances, there may be an opportunity to eliminate repetition when certain words are truly interchangeable.  
