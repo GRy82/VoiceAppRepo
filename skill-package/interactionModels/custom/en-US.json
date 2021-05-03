@@ -50,7 +50,10 @@
                         "Which one is {routeNumber}",
                         "Which one is route {routeNumber}",
                         "Which route is {routeNumber}",
-                        "Which is {routeNumber}"
+                        "Which is {routeNumber}",
+                        "Route {routeNumber}",
+                        "Route number {routeNumber}",
+                        "{routeNumber}"
                     ]
                 },
                 {
