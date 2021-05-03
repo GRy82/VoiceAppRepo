@@ -25,8 +25,9 @@ const RouteLookupIntentHandler = {
             && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RouteLookupIntent';
     },
     handle(handlerInput) {
-        const speakOutput = 'Hello World!';
-        const speakReprompt = 'I didn\'t get that. Just tell me the number.';
+        const routeNumber = handlerInput.requestEnvelope.request.intent.routeNumber.value;
+        const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
+        const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}.`;
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
