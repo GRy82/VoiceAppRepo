@@ -6,15 +6,42 @@
 
 
 const routeTree = [
-    { name: 'Speed out', info: '' },
-    { name: 'Slant', info: '' },
-    { name: 'Whip', info: '' },
-    { name: 'Drag', info: '' },
-    { name: 'Bench', info: '' },
-    { name: 'Dig', info: '' },
-    { name: 'Post corner', info: '' },
-    { name: 'Post', info: '' },
-    { name: 'Go Route', info: '' },
+    { 
+        name: 'Speed out', 
+        info: 'Take one step forward, then run towards the sideline.' 
+    },
+    { 
+        name: 'Slant', 
+        info: 'On your third step, change direction diagonally, aiming to run behind the linebackers.' 
+    },
+    { 
+        name: 'Whip', 
+        info: 'Fake a slant route, but instead break outward towards the sideline.' 
+    },
+    { 
+        name: 'Drag', 
+        info: 'A drag is similar to a slant, but you will bend your route horizontally across the field. The depth of your route will depend on the depth of linebackers.' 
+    },
+    { 
+        name: 'Bench', 
+        info: 'Run eight to ten yards forward, then break outward towards the sideline.' 
+    },
+    { 
+        name: 'Dig', 
+        info: 'Run eight to ten yards forward, then break inward across the field.' 
+    },
+    { 
+        name: 'Post corner', 
+        info: 'Run ten to twelve yards forward, and break diagonally upfield and towards the sideline.' 
+    },
+    {
+        name: 'Post', 
+        info: 'Run ten to twelve yards forward, and break diagonally upfield and towards the hashes.'  
+    },
+    { 
+        name: 'Go Route', 
+        info: 'Run upfield for an over the shoulder pass.' 
+    },
 ]
 
 module.exports = routeTree;
