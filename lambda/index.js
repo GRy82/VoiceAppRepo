@@ -2,6 +2,9 @@
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
+const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
+//routeTree object is an array representing the route tree.
+const routeTree = require('../data/routeTree');
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -13,7 +16,7 @@ const LaunchRequestHandler = {
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakOutput)
+            .reprompt(speakReprompt)
             .getResponse();
     }
 };
@@ -108,6 +111,9 @@ const ErrorHandler = {
 // payloads to the handlers above. Make sure any new handlers or interceptors you've
 // defined are included below. The order matters - they're processed top to bottom.
 exports.handler = Alexa.SkillBuilders.custom()
+    .withPersistenceAdapter(
+        new persistenceAdapter.S3PersistenceAdapter({bucketName:process.env.S3_PERSISTENCE_BUCKET})
+        )
     .addRequestHandlers(
         LaunchRequestHandler,
         RouteLookupIntentHandler,
