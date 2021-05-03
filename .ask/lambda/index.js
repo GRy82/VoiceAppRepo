@@ -6,19 +6,6 @@ const Alexa = require('ask-sdk-core');
 const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
 const routeTree = require('./routeTree');
 
-// const routeTree = [
-//     'Speed out',
-//     'Slant',
-//     'Whip',
-//     'Drag',
-//     'Bench',
-//     'Dig',
-//     'Post corner',
-//     'Post',
-//     'Go Route',
-// ]
-
-
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         console.log('request type: ' + handlerInput.requestEnvelope.request.type);
