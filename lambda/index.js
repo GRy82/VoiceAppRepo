@@ -3,7 +3,7 @@
 // session persistence, api calls, and more.
 const Alexa = require('ask-sdk-core');
 const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
-//routeTree object is an array representing the route tree.
+//routeTree object is an array containing routes of route tree. -GR
 const routeTree = require('../data/routeTree');
 
 const LaunchRequestHandler = {
@@ -12,24 +12,25 @@ const LaunchRequestHandler = {
     },
     handle(handlerInput) {
         const speakOutput = 'Welcome to Stallions Offense. Give me a route number to lookup.';
-        const speakReprompt = 'I didn\'t get that. Just tell me the number.';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakReprompt)
+            //.reprompt(speakReprompt)
             .getResponse();
     }
 };
 const RouteLookupIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'HelloWorldIntent';
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RouteLookupIntent';
     },
     handle(handlerInput) {
         const speakOutput = 'Hello World!';
+        const speakReprompt = 'I didn\'t get that. Just tell me the number.';
+
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .reprompt(speakReprompt)
             .getResponse();
     }
 };
