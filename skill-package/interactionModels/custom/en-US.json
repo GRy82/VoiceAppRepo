@@ -2,7 +2,7 @@
     "interactionModel": {
         "languageModel": {
             
-            "invocationName": "Stallions Offense",
+            "invocationName": "stallions offense",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
@@ -21,10 +21,6 @@
                     "slots": [
                         {
                             "name": "routeNumber",
-                            "type": "AMAZON.NUMBER"
-                        },
-                        {
-                            "name": "routeDepth",
                             "type": "AMAZON.NUMBER"
                         }
                     ],
@@ -62,7 +58,69 @@
                 }
             ],
             "types": []
-        }
+        },
+        "dialog": {
+            "intents": [
+                {
+                    "name": "RouteLookupIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "routeNumber",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.1137828496819.729238275101"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isLessThan",
+                                    "prompt": "Slot.Validation.1137828496819.729238275101.222515574407",
+                                    "value": "10"
+                                },
+                                {
+                                    "type": "isGreaterThan",
+                                    "prompt": "Slot.Validation.1137828496819.729238275101.133250449109",
+                                    "value": "0"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "delegationStrategy": "ALWAYS"
+        },
+        "prompts": [
+            {
+                "id": "Elicit.Slot.1137828496819.729238275101",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Give me a number, one through nine."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1137828496819.729238275101.222515574407",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "A route number can only be one through nine."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.1137828496819.729238275101.133250449109",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "A route number can only be one through nine."
+                    }
+                ]
+            }
+        ]
     }
   }
   

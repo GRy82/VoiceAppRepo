@@ -1,34 +1,37 @@
 // This sample demonstrates handling intents from an Alexa skill using the Alexa Skills Kit SDK (v2).
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
+
 const Alexa = require('ask-sdk-core');
 const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
-//routeTree object is an array containing routes of route tree. -GR
-const routeTree = require('../data/routeTree');
+const routeTree = require('./routeTree');
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
+        console.log('request type: ' + handlerInput.requestEnvelope.request.type);
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
         const speakOutput = 'Welcome to Stallions Offense. Give me a route number to lookup.';
-
+        const speakReprompt = 'For example, if you ask me what route number nine is, I will tell you it\'s a go route.';
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt(speakReprompt)
+            .reprompt(speakReprompt)
             .getResponse();
     }
 };
 const RouteLookupIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'RouteLookupIntent';
+            && handlerInput.requestEnvelope.request.intent.name === 'RouteLookupIntent';
     },
     handle(handlerInput) {
-        const routeNumber = handlerInput.requestEnvelope.request.intent.routeNumber.value;
+        const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
+        console.log(JSON.stringify(routeTree));
+        console.log(JSON.stringify(routeNumber));
+        console.log(JSON.stringify(routeTree[routeNumber]));
         const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
-        const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}.`;
-
+        const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1]}.`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
@@ -86,7 +89,7 @@ const IntentReflectorHandler = {
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            //.reprompt('add a reprompt if you want to keep the session open for the user to respond')
+            .reprompt('add a reprompt if you want to keep the session open for the user to respond')
             .getResponse();
     }
 };

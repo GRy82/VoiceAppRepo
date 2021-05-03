@@ -4,7 +4,25 @@
     "default": {
       "skillInfrastructure": {
         "@ask-cli/lambda-deployer": {
-          "deployState": {}
+          "deployState": {
+            "default": {
+              "lambda": {
+                "arn": "arn:aws:lambda:us-east-1:090002713680:function:ask-stallionsroutetree-default-default-1620053432147",
+                "lastModified": "2021-05-03T19:24:29.352+0000",
+                "revisionId": "7057bf18-4821-49e5-bb06-d4724d7414ef"
+              },
+              "iamRole": "arn:aws:iam::090002713680:role/ask-lambda-StallionsRouteTree-1620053421877"
+            }
+          }
+        }
+      },
+      "skillId": "amzn1.ask.skill.5cb16428-d09f-4f75-a87d-2072d691c7e0",
+      "skillMetadata": {
+        "lastDeployHash": "wSxXApsX+CM1g8rlvFnt02s2naw="
+      },
+      "code": {
+        "default": {
+          "lastDeployHash": "vZfxJ6+ecdlBn/6drtXHRRohugs="
         }
       }
     }
