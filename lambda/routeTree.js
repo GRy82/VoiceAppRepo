@@ -6,15 +6,15 @@
 
 
 const routeTree = [
-    'Speed out',
-    'Slant',
-    'Whip',
-    'Drag',
-    'Bench',
-    'Dig',
-    'Post corner',
-    'Post',
-    'Go Route',
+    { name: 'Speed out', info: '' },
+    { name: 'Slant', info: '' },
+    { name: 'Whip', info: '' },
+    { name: 'Drag', info: '' },
+    { name: 'Bench', info: '' },
+    { name: 'Dig', info: '' },
+    { name: 'Post corner', info: '' },
+    { name: 'Post', info: '' },
+    { name: 'Go Route', info: '' },
 ]
 
 module.exports = routeTree;

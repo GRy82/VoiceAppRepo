@@ -20,6 +20,7 @@ const LaunchRequestHandler = {
             .getResponse();
     }
 };
+
 const RouteLookupIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
@@ -27,17 +28,29 @@ const RouteLookupIntentHandler = {
     },
     handle(handlerInput) {
         const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
-        console.log(JSON.stringify(routeTree));
         console.log(JSON.stringify(routeNumber));
-        console.log(JSON.stringify(routeTree[routeNumber]));
         const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
-        const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1]}.`;
+        const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}. Would you like to hear more about this route?`;
+
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
             .getResponse();
     }
 };
+
+const RouteInfoIntentHandler = {
+    canHandle(handlerInput){
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.routeInfo === 'RouteInfoIntent';
+    },
+    handle(handlerInput, routeNumber){
+        const routeInfo = routeTree[routeNumber - 1].info;
+
+        return handlerInput.responseBuilder.speak(routeInfo);
+    }
+};
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
@@ -52,6 +65,7 @@ const HelpIntentHandler = {
             .getResponse();
     }
 };
+
 const CancelAndStopIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
@@ -65,6 +79,7 @@ const CancelAndStopIntentHandler = {
             .getResponse();
     }
 };
+
 const SessionEndedRequestHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'SessionEndedRequest';
