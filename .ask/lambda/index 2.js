@@ -5,6 +5,7 @@
 const Alexa = require('ask-sdk-core');
 const routeTree = require('./routeTree');
 
+
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
         console.log('request type: ' + handlerInput.requestEnvelope.request.type);
@@ -27,9 +28,12 @@ const RouteLookupIntentHandler = {
     },
     handle(handlerInput) {
         const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        sessionAttributes.routeNumber = routeNumber;
+
         const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
         const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}. Would you like to hear more about this route?`;
-
+        
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
@@ -40,12 +44,15 @@ const RouteLookupIntentHandler = {
 const RouteInfoIntentHandler = {
     canHandle(handlerInput){
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && handlerInput.requestEnvelope.request.intent.routeInfo === 'RouteInfoIntent';
+            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent';
     },
-    handle(handlerInput, routeNumber){
-        const routeInfo = routeTree[routeNumber - 1].info;
+    handle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info;
 
-        return handlerInput.responseBuilder.speak(routeInfo);
+        return handlerInput.responseBuilder
+            .speak(routeInfo)
+            .getResponse();
     }
 };
 

@@ -5,7 +5,17 @@
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
-                    "samples": []
+                    "samples": [
+                        "absolutely not",
+                        "can't say I do",
+                        "not really",
+                        "not now",
+                        "no thanks",
+                        "no that's ok",
+                        "no thank you",
+                        "not right now",
+                        "no"
+                    ]
                 },
                 {
                     "name": "AMAZON.HelpIntent",
