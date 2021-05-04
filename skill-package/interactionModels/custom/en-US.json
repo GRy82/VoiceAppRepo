@@ -55,6 +55,21 @@
                 {
                     "name": "AMAZON.NavigateHomeIntent",
                     "samples": []
+                },
+                {
+                    "name": "RouteInfoIntent",
+                    "slots": [
+                        {
+                            "name": "yesMoreInfo",
+                            "type": "AMAZON.YesIntent"
+                        }
+                    ],
+                    "samples":[
+                        "{yesMoreInfo}",
+                        "{yesMoreInfo} please",
+                        "{yesMoreInfo}, I would",
+                        "{yesMoreInfo}, why not"
+                    ]
                 }
             ],
             "types": []
