@@ -36,7 +36,16 @@ const PossessesUserInfoLaunchRequestHandler = {
 
     },
     handle(handlerInput){
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : 0;
+        const position = sessionAttributes.hasOwnProperty('position') ? 
+            sessionAttributes.position : null;
 
+        const speakOutput = `Welcome back ${position} number ${jerseyNumber}.`
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .getResponse();
     }
 };
 
@@ -153,11 +162,21 @@ const ErrorHandler = {
 
 const GetUserInfoInterceptor = {
     async process(handlerInput){
-        const sessionAttributes = await handlerInput.attributesManager.getPersistentAttributes() || {};
-        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
-            sessionAttributes.jerseyNumber : 0;
-        const position = sessionAttributes.hasOwnProperty('position') ?
-            sessionAttributes.position : null;
+        let jerseyNumber;
+        let position;
+        let sessionAttributes;
+
+        try{
+            sessionAttributes = await handlerInput.attributesManager.getPersistentAttributes() || {};
+            jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+                sessionAttributes.jerseyNumber : 0;
+            position = sessionAttributes.hasOwnProperty('position') ?
+                sessionAttributes.position : null;
+        } 
+        catch(error){
+            if (error.name !== 'ServiceError') 
+                return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
+        }
         
         if(jerseyNumber && position){
             attributesManager.sessionAttributes(sessionAttributes);
@@ -187,4 +206,5 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestInterceptors(
         GetUserInfoInterceptor
     )
+    //.withApiClient(new Alexa.DefaultApiClient())
     .lambda();
