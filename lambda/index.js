@@ -51,6 +51,7 @@ const PossessesUserInfoLaunchRequestHandler = {
 
 const CollectPlayerInfoIntentHandler = {
     canHandle(handlerInput){
+        console.log('request type: ' + handlerInput.requestEnvelope.request.type);
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'CollectPlayerInfoIntent';
     },
@@ -196,7 +197,7 @@ const GetUserInfoInterceptor = {
         try{
             sessionAttributes = await handlerInput.attributesManager.getPersistentAttributes() || {};
             jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
-                sessionAttributes.jerseyNumber : 0;
+                sessionAttributes.jerseyNumber : null;
             position = sessionAttributes.hasOwnProperty('position') ?
                 sessionAttributes.position : null;
         } 
@@ -206,7 +207,7 @@ const GetUserInfoInterceptor = {
         }
         
         if(jerseyNumber && position){
-            attributesManager.sessionAttributes(sessionAttributes);
+            attributesManager.setSessionAttributes(sessionAttributes);
         } 
     }
 };
@@ -230,7 +231,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         IntentReflectorHandler, // make sure IntentReflectorHandler is last so it doesn't override your custom intent handlers
         ) 
     .addErrorHandlers(
-        ErrorHandler,
+        ErrorHandler
         )
     .addRequestInterceptors(
         GetUserInfoInterceptor

@@ -1,7 +1,7 @@
 {
     "interactionModel": {
         "languageModel": {
-            "invocationName": "stallions offense",
+            "invocationName": "stallions locker room",
             "intents": [
                 {
                     "name": "AMAZON.CancelIntent",
