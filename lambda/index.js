@@ -12,7 +12,7 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome to Stallions Offense. Give me a route number to lookup.';
+        const speakOutput = 'Welcome to Stallions Offense. Give me a route number to lookup.';//What is your posiiton and jersey number?
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
         return handlerInput.responseBuilder
             .speak(speakOutput)

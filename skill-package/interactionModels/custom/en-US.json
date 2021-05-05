@@ -80,9 +80,109 @@
                         "Yes I would",
                         "Yes"
                     ]
+                },
+                {
+                    "name": "CollectPlayerInfoIntent",
+                    "slots": [
+                        {
+                            "name": "jerseyNumber",
+                            "type": "AMAZON.NUMBER",
+                            "samples": [
+                                "The number on my jersey is {jerseyNumber}",
+                                "My jersey is {jerseyNumber}",
+                                "I'm {jerseyNumber}",
+                                "I'm number {jerseyNumber}",
+                                "My number is {jerseyNumber}",
+                                "My jersey number is {jerseyNumber}"
+                            ]
+                        },
+                        {
+                            "name": "position",
+                            "type": "Offensive_Position",
+                            "samples": [
+                                "{position}",
+                                "I play {position}",
+                                "I am a {position}",
+                                "I am the {position}"
+                            ]
+                        }
+                    ],
+                    "samples": [
+                        "I'm number {jerseyNumber} {position}",
+                        "I'm number {jerseyNumber} and I'm a {position}",
+                        "I am a {position} and my jersey number is {jerseyNumber}",
+                        "I am a {position} jersey number is {jerseyNumber}",
+                        "I am a {position} number {jerseyNumber}",
+                        "My number is {jerseyNumber} I'm a {position}",
+                        "{position} {jerseyNumber}",
+                        "{jerseyNumber} {position}",
+                        "{position} number {jerseyNumber}",
+                        "I am a {position} and my number is {jerseyNumber}"
+                    ]
                 }
             ],
-            "types": []
+            "types": [
+                {
+                    "name": "Offensive_Position",
+                    "values": [
+                        {
+                            "name": {
+                                "value": "Split End"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "slot receiver"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "wide out"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "fullback"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "tailback"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "halfback"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "quarterback"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "flanker"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "running back"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "tight end"
+                            }
+                        },
+                        {
+                            "name": {
+                                "value": "wide receiver"
+                            }
+                        }
+                    ]
+                }
+            ]
         },
         "dialog": {
             "intents": [
@@ -111,6 +211,43 @@
                                     "value": "0"
                                 }
                             ]
+                        }
+                    ]
+                },
+                {
+                    "name": "CollectPlayerInfoIntent",
+                    "confirmationRequired": false,
+                    "prompts": {},
+                    "slots": [
+                        {
+                            "name": "jerseyNumber",
+                            "type": "AMAZON.NUMBER",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.283044885020.1431287035182"
+                            },
+                            "validations": [
+                                {
+                                    "type": "isLessThan",
+                                    "prompt": "Slot.Validation.283044885020.1431287035182.835950607665",
+                                    "value": "100"
+                                },
+                                {
+                                    "type": "isGreaterThan",
+                                    "prompt": "Slot.Validation.283044885020.1431287035182.1332081824926",
+                                    "value": "0"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "position",
+                            "type": "Offensive_Position",
+                            "confirmationRequired": false,
+                            "elicitationRequired": true,
+                            "prompts": {
+                                "elicitation": "Elicit.Slot.283044885020.1276399695893"
+                            }
                         }
                     ]
                 }
@@ -142,6 +279,50 @@
                     {
                         "type": "PlainText",
                         "value": "A route number can only be one through nine."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.283044885020.1431287035182",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "What is your jersey number?"
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "I didn't hear your number. What number is on your jersey?"
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.283044885020.1431287035182.835950607665",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "The number you gave is not a valid jersery number. The number must be between one and ninety-nine."
+                    }
+                ]
+            },
+            {
+                "id": "Slot.Validation.283044885020.1431287035182.1332081824926",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "The number you gave is not a valid jersery number. The number must be between one and ninety-nine."
+                    }
+                ]
+            },
+            {
+                "id": "Elicit.Slot.283044885020.1276399695893",
+                "variations": [
+                    {
+                        "type": "PlainText",
+                        "value": "Please tell me what position you play on offense."
+                    },
+                    {
+                        "type": "PlainText",
+                        "value": "I didn't get your position. What position do you play?"
                     }
                 ]
             }
