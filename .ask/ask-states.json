@@ -8,8 +8,8 @@
             "default": {
               "lambda": {
                 "arn": "arn:aws:lambda:us-east-1:090002713680:function:ask-stallionsroutetree-default-default-1620053432147",
-                "lastModified": "2021-05-05T19:54:32.116+0000",
-                "revisionId": "fa688a17-ef38-4857-8dc8-1d2c9e26f2af"
+                "lastModified": "2021-05-05T21:16:07.973+0000",
+                "revisionId": "c5e609a6-a3a1-4fe3-ab22-e7354d470a5f"
               },
               "iamRole": "arn:aws:iam::090002713680:role/ask-lambda-StallionsRouteTree-1620053421877"
             }
@@ -22,7 +22,7 @@
       },
       "code": {
         "default": {
-          "lastDeployHash": "m2ht9b1tXJFV1iR5HhPSjP6crnk="
+          "lastDeployHash": "VqxSh8W35JTptJ5yjgk9R9N4QAk="
         }
       }
     }

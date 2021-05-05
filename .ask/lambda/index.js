@@ -17,14 +17,16 @@ const LaunchRequestHandler = {
         const reprompt = 'I didn\'t get that. What is your position, and your jersey number?';
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt()
+            .reprompt(reprompt)
             .getResponse();
     }
 };
 
 const PossessesUserInfoLaunchRequestHandler = {
     canHandle(handlerInput){
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes() || {};
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = attributesManager.getSessionAttributes() || {};
+        
         const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
             sessionAttributes.jerseyNumber : 0;
         const position = sessionAttributes.hasOwnProperty('position') ? 
@@ -61,12 +63,13 @@ const CollectPlayerInfoIntentHandler = {
         const jerseyNumber = handlerInput.requestEnvelope.request.intent.slots.jerseyNumber.value;
         const position = handlerInput.requestEnvelope.request.intent.slots.position.value;
 
+        const attributesManager =  handlerInput.attributesManager;
+        
         const playerAttributes = {
             "jerseyNumber": jerseyNumber,
             "position": position
         };
 
-        const attributesManager =  handlerInput.attributesManager;
         attributesManager.setPersistentAttributes(playerAttributes);
         await attributesManager.savePersistentAttributes();
 
@@ -192,21 +195,19 @@ const ErrorHandler = {
 
 const GetUserInfoInterceptor = {
     async process(handlerInput){
-        let jerseyNumber;
-        let position;
-        let sessionAttributes;
-
-        try{
-            sessionAttributes = await handlerInput.attributesManager.getPersistentAttributes() || {};
-            jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
-                sessionAttributes.jerseyNumber : null;
-            position = sessionAttributes.hasOwnProperty('position') ?
-                sessionAttributes.position : null;
-        } 
-        catch(error){
-            if (error.name !== 'ServiceError') 
-                return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
-        }
+        const attributesManager = handlerInput.attributesManager;
+        sessionAttributes = await attributesManager.getPersistentAttributes() || {};
+        
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : null;
+            
+        const position = sessionAttributes.hasOwnProperty('position') ?
+            sessionAttributes.position : null;
+         
+        // catch(error){
+        //     if (error.name !== 'ServiceError') 
+        //         return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
+        // }
         
         if(jerseyNumber && position){
             attributesManager.setSessionAttributes(sessionAttributes);
@@ -222,8 +223,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         new persistenceAdapter.S3PersistenceAdapter({bucketName:process.env.S3_PERSISTENCE_BUCKET})
     )
     .addRequestHandlers(
-        LaunchRequestHandler,
         PossessesUserInfoLaunchRequestHandler,
+        LaunchRequestHandler,
         CollectPlayerInfoIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
