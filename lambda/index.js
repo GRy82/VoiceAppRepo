@@ -3,6 +3,7 @@
 // session persistence, api calls, and more.
 
 const Alexa = require('ask-sdk-core');
+const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
 const routeTree = require('./routeTree');
 
 
@@ -150,10 +151,27 @@ const ErrorHandler = {
     }
 };
 
+const GetUserInfoInterceptor = {
+    async process(handlerInput){
+        const sessionAttributes = await handlerInput.attributesManager.getPersistentAttributes() || {};
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : 0;
+        const position = sessionAttributes.hasOwnProperty('position') ?
+            sessionAttributes.position : null;
+        
+        if(jerseyNumber && position){
+            attributesManager.sessionAttributes(sessionAttributes);
+        } 
+    }
+};
+
 // The SkillBuilder acts as the entry point for your skill, routing all request and response
 // payloads to the handlers above. Make sure any new handlers or interceptors you've
 // defined are included below. The order matters - they're processed top to bottom.
 exports.handler = Alexa.SkillBuilders.custom()
+    .withPersistenceAdapter(
+        new persistenceAdapter.S3PersistenceAdapter({bucketName:process.env.S3_PERSISTENCE_BUCKET})
+    )
     .addRequestHandlers(
         LaunchRequestHandler,
         RouteLookupIntentHandler,
@@ -166,4 +184,7 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addErrorHandlers(
         ErrorHandler,
         )
+    .addRequestInterceptors(
+        GetUserInfoInterceptor
+    )
     .lambda();
