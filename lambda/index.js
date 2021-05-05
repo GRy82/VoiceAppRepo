@@ -21,6 +21,24 @@ const LaunchRequestHandler = {
     }
 };
 
+const PossessesUserInfoLaunchRequestHandler = {
+    canHandle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes() || {};
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : 0;
+        const position = sessionAttributes.hasOwnProperty('position') ? 
+            sessionAttributes.position : null;
+
+        return handlerInput.requestEnvelope.request.type === 'LaunchRequest' &&
+            jerseyNumber &&
+            position;
+
+    },
+    handle(handlerInput){
+
+    }
+};
+
 const RouteLookupIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
