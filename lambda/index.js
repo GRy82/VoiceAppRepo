@@ -13,11 +13,9 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome to Stallions Offense. Give me a route number to lookup.';//What is your posiiton and jersey number?
-        const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
+        const speakOutput = 'Welcome to Stallions Offense. What is your position and jersey number?'
         return handlerInput.responseBuilder
             .speak(speakOutput)
-            .reprompt(speakReprompt)
             .getResponse();
     }
 };
@@ -41,10 +39,39 @@ const PossessesUserInfoLaunchRequestHandler = {
         const position = sessionAttributes.hasOwnProperty('position') ? 
             sessionAttributes.position : null;
 
-        const speakOutput = `Welcome back ${position} number ${jerseyNumber}.`
+        const speakOutput = `Welcome back ${position} number ${jerseyNumber}. Give me a route number to look up.`
+        const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
 
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .reprompt(speakReprompt)
+            .getResponse();
+    }
+};
+
+const CollectPlayerInfoIntentHandler = {
+    canHandle(handlerInput){
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'CollectPlayerInfoIntent';
+    },
+    async handle(handlerInput){
+        const jerseyNumber = handlerInput.requestEnvelope.request.intent.slots.jerseyNumber.value;
+        const position = handlerInput.requestEnvelope.request.intent.slots.position.value;
+
+        const playerAttributes = {
+            "jerseyNumber": jerseyNumber,
+            "position": position
+        };
+
+        const attributesManager =  handlerInput.attributesManager;
+        attributesManager.setPersistentAttributes(playerAttributes);
+        await attributesManager.savePersistentAttributes();
+
+        const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
+        const speakOutput = `Thanks ${position} number ${jerseyNumber}. Give me a route number to lookup.`;
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakReprompt)
             .getResponse();
     }
 };
@@ -193,6 +220,8 @@ exports.handler = Alexa.SkillBuilders.custom()
     )
     .addRequestHandlers(
         LaunchRequestHandler,
+        PossessesUserInfoLaunchRequestHandler,
+        CollectPlayerInfoIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
         HelpIntentHandler,
@@ -206,5 +235,5 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addRequestInterceptors(
         GetUserInfoInterceptor
     )
-    //.withApiClient(new Alexa.DefaultApiClient())
+    .withApiClient(new Alexa.DefaultApiClient())
     .lambda();

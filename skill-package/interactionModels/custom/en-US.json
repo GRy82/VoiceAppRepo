@@ -127,7 +127,7 @@
                     "values": [
                         {
                             "name": {
-                                "value": "Split End"
+                                "value": "split end"
                             }
                         },
                         {
@@ -329,4 +329,3 @@
         ]
     }
 }
-  

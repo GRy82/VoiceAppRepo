@@ -3,7 +3,9 @@
 // session persistence, api calls, and more.
 
 const Alexa = require('ask-sdk-core');
+const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
 const routeTree = require('./routeTree');
+
 
 const LaunchRequestHandler = {
     canHandle(handlerInput) {
@@ -11,8 +13,62 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome to Stallions Offense. Give me a route number to lookup.';
+        const speakOutput = 'Welcome to Stallions Offense. What is your position and jersey number?'
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .getResponse();
+    }
+};
+
+const PossessesUserInfoLaunchRequestHandler = {
+    canHandle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes() || {};
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : 0;
+        const position = sessionAttributes.hasOwnProperty('position') ? 
+            sessionAttributes.position : null;
+
+        return handlerInput.requestEnvelope.request.type === 'LaunchRequest' &&
+            jerseyNumber &&
+            position;
+
+    },
+    handle(handlerInput){
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : 0;
+        const position = sessionAttributes.hasOwnProperty('position') ? 
+            sessionAttributes.position : null;
+
+        const speakOutput = `Welcome back ${position} number ${jerseyNumber}. Give me a route number to look up.`
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
+
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakReprompt)
+            .getResponse();
+    }
+};
+
+const CollectPlayerInfoIntentHandler = {
+    canHandle(handlerInput){
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'CollectPlayerInfoIntent';
+    },
+    async handle(handlerInput){
+        const jerseyNumber = handlerInput.requestEnvelope.request.intent.slots.jerseyNumber.value;
+        const position = handlerInput.requestEnvelope.request.intent.slots.position.value;
+
+        const playerAttributes = {
+            "jerseyNumber": jerseyNumber,
+            "position": position
+        };
+
+        const attributesManager =  handlerInput.attributesManager;
+        attributesManager.setPersistentAttributes(playerAttributes);
+        await attributesManager.savePersistentAttributes();
+
+        const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
+        const speakOutput = `Thanks ${position} number ${jerseyNumber}. Give me a route number to lookup.`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
@@ -27,9 +83,12 @@ const RouteLookupIntentHandler = {
     },
     handle(handlerInput) {
         const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        sessionAttributes.routeNumber = routeNumber;
+
         const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
         const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}. Would you like to hear more about this route?`;
-
+        
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
@@ -40,12 +99,15 @@ const RouteLookupIntentHandler = {
 const RouteInfoIntentHandler = {
     canHandle(handlerInput){
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && handlerInput.requestEnvelope.request.intent.routeInfo === 'RouteInfoIntent';
+            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent';
     },
-    handle(handlerInput, routeNumber){
-        const routeInfo = routeTree[routeNumber - 1].info;
+    handle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info;
 
-        return handlerInput.responseBuilder.speak(routeInfo);
+        return handlerInput.responseBuilder
+            .speak(routeInfo)
+            .getResponse();
     }
 };
 
@@ -125,12 +187,41 @@ const ErrorHandler = {
     }
 };
 
+const GetUserInfoInterceptor = {
+    async process(handlerInput){
+        let jerseyNumber;
+        let position;
+        let sessionAttributes;
+
+        try{
+            sessionAttributes = await handlerInput.attributesManager.getPersistentAttributes() || {};
+            jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+                sessionAttributes.jerseyNumber : 0;
+            position = sessionAttributes.hasOwnProperty('position') ?
+                sessionAttributes.position : null;
+        } 
+        catch(error){
+            if (error.name !== 'ServiceError') 
+                return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
+        }
+        
+        if(jerseyNumber && position){
+            attributesManager.sessionAttributes(sessionAttributes);
+        } 
+    }
+};
+
 // The SkillBuilder acts as the entry point for your skill, routing all request and response
 // payloads to the handlers above. Make sure any new handlers or interceptors you've
 // defined are included below. The order matters - they're processed top to bottom.
 exports.handler = Alexa.SkillBuilders.custom()
+    .withPersistenceAdapter(
+        new persistenceAdapter.S3PersistenceAdapter({bucketName:process.env.S3_PERSISTENCE_BUCKET})
+    )
     .addRequestHandlers(
         LaunchRequestHandler,
+        PossessesUserInfoLaunchRequestHandler,
+        CollectPlayerInfoIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
         HelpIntentHandler,
@@ -141,4 +232,8 @@ exports.handler = Alexa.SkillBuilders.custom()
     .addErrorHandlers(
         ErrorHandler,
         )
+    .addRequestInterceptors(
+        GetUserInfoInterceptor
+    )
+    .withApiClient(new Alexa.DefaultApiClient())
     .lambda();
