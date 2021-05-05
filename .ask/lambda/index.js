@@ -14,8 +14,10 @@ const LaunchRequestHandler = {
     },
     handle(handlerInput) {
         const speakOutput = 'Welcome to Stallions Offense. What is your position and jersey number?'
+        const reprompt = 'I didn\'t get that. What is your position, and your jersey number?';
         return handlerInput.responseBuilder
             .speak(speakOutput)
+            .reprompt()
             .getResponse();
     }
 };
@@ -59,14 +61,14 @@ const CollectPlayerInfoIntentHandler = {
         const jerseyNumber = handlerInput.requestEnvelope.request.intent.slots.jerseyNumber.value;
         const position = handlerInput.requestEnvelope.request.intent.slots.position.value;
 
-        const playerAttributes = {
-            "jerseyNumber": jerseyNumber,
-            "position": position
-        };
+        // const playerAttributes = {
+        //     "jerseyNumber": jerseyNumber,
+        //     "position": position
+        // };
 
         const attributesManager =  handlerInput.attributesManager;
-        attributesManager.setPersistentAttributes(playerAttributes);
-        await attributesManager.savePersistentAttributes();
+        // attributesManager.setPersistentAttributes(playerAttributes);
+        // await attributesManager.savePersistentAttributes();
 
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
         const speakOutput = `Thanks ${position} number ${jerseyNumber}. Give me a route number to lookup.`;
