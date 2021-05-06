@@ -73,9 +73,31 @@ const CollectPlayerInfoIntentHandler = {
         attributesManager.setPersistentAttributes(playerAttributes);
         await attributesManager.savePersistentAttributes();
 
-        const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
-        const speakOutput = `Thanks ${position} number ${jerseyNumber}. Give me a route number to lookup.`;
+        const speakReprompt = 'I didn\'t get that. Please repeat your mobile number.';
+        const speakOutput = `Thanks ${position} number ${jerseyNumber}. Upon your request only, I can text you helpful information. What is your mobile number?`;
         return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakReprompt)
+            .getResponse();
+    }
+};
+
+const CollectPlayerMobileNumberIntentHandler = {
+    canHandle(handlerInput){
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'CollectPlayerMobileNumberIntent';
+    },
+    handle(handlerInput){
+        const mobileNumber = handlerInput.requestEnvelope.request.intent.slots.mobileNumber.value;
+        
+        const attributesManager = handlerInput.attributesManager;
+        attributesManager.setPersistentAttributes({ "mobileNumber": mobileNumber });
+        attributesManager.savePersistentAttributes();
+
+        const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
+        const speakOutput = 'Your mobile number has been saved. Give me a route to lookup in the route tree.';
+        
+        return handlerInput.responseBuilder()
             .speak(speakOutput)
             .reprompt(speakReprompt)
             .getResponse();
@@ -226,6 +248,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         PossessesUserInfoLaunchRequestHandler,
         LaunchRequestHandler,
         CollectPlayerInfoIntentHandler,
+        CollectPlayerMobileNumberIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
         HelpIntentHandler,
