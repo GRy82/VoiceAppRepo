@@ -134,6 +134,7 @@
                         }
                     ],
                     "samples": [
+                        "my mobile phone number is {mobileNumber}",
                         "my mobile number is area code {mobileNumber}",
                         "my phone number is area code {mobileNumber}",
                         "my number is area code {mobileNumber}",
@@ -287,10 +288,9 @@
                         {
                             "name": "mobileNumber",
                             "type": "AMAZON.PhoneNumber",
-                            "confirmationRequired": true,
+                            "confirmationRequired": false,
                             "elicitationRequired": true,
                             "prompts": {
-                                "confirmation": "Confirm.Slot.1383911054878.336407652717",
                                 "elicitation": "Elicit.Slot.1383911054878.336407652717"
                             }
                         }

@@ -8,8 +8,8 @@
             "default": {
               "lambda": {
                 "arn": "arn:aws:lambda:us-east-1:090002713680:function:ask-stallionsroutetree-default-default-1620053432147",
-                "lastModified": "2021-05-06T17:09:34.236+0000",
-                "revisionId": "1964316d-6910-49de-b35d-4c7a364401af"
+                "lastModified": "2021-05-11T14:30:57.850+0000",
+                "revisionId": "6579fd96-1e57-42ef-a991-e51d1b73b203"
               },
               "iamRole": "arn:aws:iam::090002713680:role/ask-lambda-StallionsRouteTree-1620053421877"
             }
@@ -18,11 +18,11 @@
       },
       "skillId": "amzn1.ask.skill.5cb16428-d09f-4f75-a87d-2072d691c7e0",
       "skillMetadata": {
-        "lastDeployHash": "B6gwc/5nOgfNxB00dBDJ6Rs3kEI="
+        "lastDeployHash": "Av0zLPzfxFupUcBZbN2iQlENxbs="
       },
       "code": {
         "default": {
-          "lastDeployHash": "JGVhoX30uHlEAj5B1B+aa7gBgao="
+          "lastDeployHash": "DQzCScf902KSE6gWLO7F15kGFvA="
         }
       }
     }
