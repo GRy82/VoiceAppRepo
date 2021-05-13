@@ -90,7 +90,7 @@ const CollectPlayerInfoIntentHandler = {
     }
 };
 
-
+//When setting persistent attributes, it seems to serve as a complete overwrite.
 const CollectPlayerMobileNumberIntentHandler = {
     canHandle(handlerInput){
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
