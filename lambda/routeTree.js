@@ -12,7 +12,8 @@ const routeTree = [
     },
     { 
         name: 'Slant', 
-        info: 'On your third step, change direction diagonally, aiming to run behind the linebackers.' 
+        info: 'On your third step, change direction diagonally, aiming to run behind the linebackers.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY'
     },
     { 
         name: 'Whip', 

@@ -163,6 +163,20 @@ const RouteInfoIntentHandler = {
     }
 };
 
+
+const RequestTextIntentHandler = {
+    canHandle(handlerInput){
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'RequestTextIntent';
+    },
+    handle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const textContent = 'Use the following link to see the route demonstrated: ' + routeTree[sessionAttributes.routeNumber - 1].textedUrl;
+        //logic for sending text message.
+    }
+};
+
+
 const HelpIntentHandler = {
     canHandle(handlerInput) {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
