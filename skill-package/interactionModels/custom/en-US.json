@@ -148,6 +148,14 @@
                         "it's {mobileNumber}",
                         "{mobileNumber}"
                     ]
+                },
+                {
+                    "name": "RequestTextIntent",
+                    "slots": [],
+                    "samples": [
+                        "more please",
+                        "more"
+                    ]
                 }
             ],
             "types": [

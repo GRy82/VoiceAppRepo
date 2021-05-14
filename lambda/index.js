@@ -90,6 +90,7 @@ const CollectPlayerInfoIntentHandler = {
     }
 };
 
+
 //When setting persistent attributes, it seems to serve as a complete overwrite.
 const CollectPlayerMobileNumberIntentHandler = {
     canHandle(handlerInput){
@@ -155,7 +156,7 @@ const RouteInfoIntentHandler = {
     },
     handle(handlerInput){
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info;
+        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info + 'Would you like us to text you additional resources? Just say more.';
 
         return handlerInput.responseBuilder
             .speak(routeInfo)
@@ -292,6 +293,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         CollectPlayerMobileNumberIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
+        RequestTextIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
