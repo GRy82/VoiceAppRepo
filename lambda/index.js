@@ -5,6 +5,7 @@
 const Alexa = require('ask-sdk-core');
 const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
 const routeTree = require('./routeTree');
+const sendText = require('./messaging');
 
 
 const LaunchRequestHandler = {
@@ -172,8 +173,12 @@ const RequestTextIntentHandler = {
     },
     handle(handlerInput){
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        const textContent = 'Use the following link to see the route demonstrated: ' + routeTree[sessionAttributes.routeNumber - 1].textedUrl;
-        //logic for sending text message.
+        const mobileNumber = sessionAttributes.mobileNumber;
+        const textedUrl = routeTree[sessionAttributes.routeNumber - 1].textedUrl;
+        sendText(mobileNumber, textedUrl);
+        const confirmation = 'The text message has been sent to your mobile number.'
+        return handlerInput.responseBuilder
+            .speak(confirmation);
     }
 };
 
