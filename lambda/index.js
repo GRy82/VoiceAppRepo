@@ -174,9 +174,12 @@ const RequestTextIntentHandler = {
     handle(handlerInput){
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
         const mobileNumber = sessionAttributes.mobileNumber;
-        const textedUrl = routeTree[sessionAttributes.routeNumber - 1].textedUrl;
-        sendText(mobileNumber, textedUrl);
-        const confirmation = 'The text message has been sent to your mobile number.'
+        const text = 'Use the following link to see the route demonstrated: ' + routeTree[sessionAttributes.routeNumber - 1].textedUrl;
+        const response = sendText(mobileNumber, text);
+        let confirmation = 'The text message has been sent to your mobile number.'
+        if (response !== 'success'){
+            confirmation = 'Sorry, the text message was not able to be sent.';
+        }
         return handlerInput.responseBuilder
             .speak(confirmation);
     }
