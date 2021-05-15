@@ -197,9 +197,16 @@ const RequestTextIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'RequestTextIntent';
     },
-    handle(handlerInput){
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        const mobileNumber = sessionAttributes.mobileNumber;
+    async handle(handlerInput){
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        
+        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
+            sessionAttributes.routeNumber : null;
+            
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
+        
         const text = 'Use the following link to see the route demonstrated: ' + routeTree[sessionAttributes.routeNumber - 1].textedUrl;
         const response = sendText(mobileNumber, text);
         let confirmation = 'The text message has been sent to your mobile number.'
