@@ -77,8 +77,6 @@ const CollectPlayerInfoIntentHandler = {
             "position": position
         };
         
-        attributesManager.setSessionAttributes()
-
         attributesManager.setPersistentAttributes(playerAttributes);
         await attributesManager.savePersistentAttributes();
 
@@ -135,10 +133,30 @@ const RouteLookupIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'RouteLookupIntent';
     },
-    handle(handlerInput) {
+    async handle(handlerInput) {
         const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        sessionAttributes.routeNumber = routeNumber;
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : null;
+            
+        const position = sessionAttributes.hasOwnProperty('position') ?
+            sessionAttributes.position : null;
+            
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
+        
+        const playerAttributes = {
+            "jerseyNumber": jerseyNumber,
+            "position": position,
+            "mobileNumber": mobileNumber,
+            "routeNumber": routeNumber
+        };
+        
+        attributesManager.setPersistentAttributes(playerAttributes);
+        await attributesManager.savePersistentAttributes();
+        
 
         const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
         const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}. Would you like to hear more about this route?`;
@@ -155,10 +173,18 @@ const RouteInfoIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent';
     },
-    handle(handlerInput){
-        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info + 'Would you like us to text you additional resources? Just say more.';
-
+    async handle(handlerInput){
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        
+       const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
+            sessionAttributes.routeNumber : null;
+        
+        let routeInfo = 'Sorry. Something went wrong. Try starting over.';
+        if(routeNumber){
+            routeInfo = routeTree[routeNumber - 1].info + ' Would you like us to text you additional resources for this route? Just say more.';
+        }
+        
         return handlerInput.responseBuilder
             .speak(routeInfo)
             .getResponse();
@@ -275,15 +301,21 @@ const GetUserInfoInterceptor = {
             
         const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
             sessionAttributes.mobileNumber : null;
+            
+        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
+            sessionAttributes.routeNumber : null;
          
         // catch(error){
         //     if (error.name !== 'ServiceError') 
         //         return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
         // }
-        
-        if(jerseyNumber && position && mobileNumber){
+
+        if(jerseyNumber && position && mobileNumber && routeNumber){
             attributesManager.setSessionAttributes(sessionAttributes);
-        } 
+        }
+        else if(jerseyNumber && position && mobileNumber && routeNumber){
+            attributesManager.setSessionAttributes(sessionAttributes);
+        }
     }
 };
 

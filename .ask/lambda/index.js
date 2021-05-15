@@ -1,5 +1,3 @@
-//WHAT THE FUCK IS GOING ON?!
-
 // This sample demonstrates handling intents from an Alexa skill using the Alexa Skills Kit SDK (v2).
 // Please visit https://alexa.design/cookbook for additional examples on implementing slots, dialog management,
 // session persistence, api calls, and more.
@@ -7,7 +5,7 @@
 const Alexa = require('ask-sdk-core');
 const persistenceAdapter = require('ask-sdk-s3-persistence-adapter');
 const routeTree = require('./routeTree');
-const express = require('express');
+const sendText = require('./messaging');
 
 
 const LaunchRequestHandler = {
@@ -16,7 +14,7 @@ const LaunchRequestHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'LaunchRequest';
     },
     handle(handlerInput) {
-        const speakOutput = 'Welcome to Stallions Offense. What is your position and jersey number?'
+        const speakOutput = 'Welcome to Stallions Locker Room. What is your position and jersey number?'
         const reprompt = 'I didn\'t get that. What is your position, and your jersey number?';
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -34,10 +32,13 @@ const PossessesUserInfoLaunchRequestHandler = {
             sessionAttributes.jerseyNumber : 0;
         const position = sessionAttributes.hasOwnProperty('position') ? 
             sessionAttributes.position : null;
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
 
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest' &&
             jerseyNumber &&
-            position;
+            position &&
+            mobileNumber;
 
     },
     handle(handlerInput){
@@ -45,8 +46,10 @@ const PossessesUserInfoLaunchRequestHandler = {
             sessionAttributes.jerseyNumber : 0;
         const position = sessionAttributes.hasOwnProperty('position') ? 
             sessionAttributes.position : null;
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
 
-        const speakOutput = `Welcome back ${position} number ${jerseyNumber}. Give me a route number to look up.`
+        const speakOutput = `Welcome back ${position} number ${jerseyNumber} number ${mobileNumber}. Give me a route number to look up.`
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
 
         return handlerInput.responseBuilder
@@ -55,6 +58,7 @@ const PossessesUserInfoLaunchRequestHandler = {
             .getResponse();
     }
 };
+
 
 const CollectPlayerInfoIntentHandler = {
     canHandle(handlerInput){
@@ -72,12 +76,14 @@ const CollectPlayerInfoIntentHandler = {
             "jerseyNumber": jerseyNumber,
             "position": position
         };
+        
+        attributesManager.setSessionAttributes()
 
         attributesManager.setPersistentAttributes(playerAttributes);
         await attributesManager.savePersistentAttributes();
 
         const speakReprompt = 'I didn\'t get that. Please repeat your mobile number.';
-        const speakOutput = `Thanks ${position} number ${jerseyNumber}. Upon your request only, I can text you helpful information. What is your mobile number?`;
+        const speakOutput = `Thanks ${position} number ${jerseyNumber}. You will have the option to receive text messages at times when it may be helpful. What is your mobile phone number?`;
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
@@ -85,27 +91,44 @@ const CollectPlayerInfoIntentHandler = {
     }
 };
 
+
+//When setting persistent attributes, it seems to serve as a complete overwrite.
 const CollectPlayerMobileNumberIntentHandler = {
     canHandle(handlerInput){
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'CollectPlayerMobileNumberIntent';
     },
-    handle(handlerInput){
+    async handle(handlerInput){
         const mobileNumber = handlerInput.requestEnvelope.request.intent.slots.mobileNumber.value;
         
         const attributesManager = handlerInput.attributesManager;
-        attributesManager.setPersistentAttributes({ "mobileNumber": mobileNumber });
-        attributesManager.savePersistentAttributes();
+        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        
+        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
+            sessionAttributes.jerseyNumber : null;
+            
+        const position = sessionAttributes.hasOwnProperty('position') ?
+            sessionAttributes.position : null;
+        
+        const playerAttributes = {
+            "jerseyNumber": jerseyNumber,
+            "position": position,
+            "mobileNumber": mobileNumber
+        };
+        
+        attributesManager.setPersistentAttributes(playerAttributes);
+        await attributesManager.savePersistentAttributes();
 
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
-        const speakOutput = 'Your mobile number has been saved. Give me a route to lookup in the route tree.';
+        const speakOutput = `Your mobile number has been saved. Give me a route to lookup in the route tree.`;
         
-        return handlerInput.responseBuilder()
+        return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
             .getResponse();
     }
 };
+
 
 const RouteLookupIntentHandler = {
     canHandle(handlerInput) {
@@ -134,13 +157,34 @@ const RouteInfoIntentHandler = {
     },
     handle(handlerInput){
         const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
-        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info;
+        const routeInfo = routeTree[sessionAttributes.routeNumber - 1].info + 'Would you like us to text you additional resources? Just say more.';
 
         return handlerInput.responseBuilder
             .speak(routeInfo)
             .getResponse();
     }
 };
+
+
+const RequestTextIntentHandler = {
+    canHandle(handlerInput){
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'RequestTextIntent';
+    },
+    handle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const mobileNumber = sessionAttributes.mobileNumber;
+        const text = 'Use the following link to see the route demonstrated: ' + routeTree[sessionAttributes.routeNumber - 1].textedUrl;
+        const response = sendText(mobileNumber, text);
+        let confirmation = 'The text message has been sent to your mobile number.'
+        if (response !== 'success'){
+            confirmation = 'Sorry, the text message was not able to be sent.';
+        }
+        return handlerInput.responseBuilder
+            .speak(confirmation);
+    }
+};
+
 
 const HelpIntentHandler = {
     canHandle(handlerInput) {
@@ -228,13 +272,16 @@ const GetUserInfoInterceptor = {
             
         const position = sessionAttributes.hasOwnProperty('position') ?
             sessionAttributes.position : null;
+            
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
          
         // catch(error){
         //     if (error.name !== 'ServiceError') 
         //         return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
         // }
         
-        if(jerseyNumber && position){
+        if(jerseyNumber && position && mobileNumber){
             attributesManager.setSessionAttributes(sessionAttributes);
         } 
     }
@@ -254,6 +301,7 @@ exports.handler = Alexa.SkillBuilders.custom()
         CollectPlayerMobileNumberIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
+        RequestTextIntentHandler,
         HelpIntentHandler,
         CancelAndStopIntentHandler,
         SessionEndedRequestHandler,
