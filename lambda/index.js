@@ -182,7 +182,7 @@ const RouteInfoIntentHandler = {
         
         let routeInfo = 'Sorry. Something went wrong. Try starting over.';
         if(routeNumber){
-            routeInfo = routeTree[routeNumber - 1].info + ' Would you like us to text you additional resources for this route? Just say more.';
+            routeInfo = routeTree[routeNumber - 1].info + ' Would you like us to text you additional resources for this route? Just say text me.';
         }
         
         return handlerInput.responseBuilder
