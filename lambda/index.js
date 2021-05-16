@@ -158,7 +158,7 @@ const RouteLookupIntentHandler = {
         await attributesManager.savePersistentAttributes();
         
 
-        const speakReprompt = 'I didn\'t get that. Give me a number, one through nine.';
+        const speakReprompt = 'If you want more info, just say yes.';
         const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}. Would you like to hear more about this route?`;
         
         return handlerInput.responseBuilder
@@ -182,12 +182,12 @@ const RouteInfoIntentHandler = {
         
         let routeInfo = 'Sorry. Something went wrong. Try starting over.';
         if(routeNumber){
-            routeInfo = routeTree[routeNumber - 1].info + ' Would you like us to text you additional resources for this route? Just say text me.';
+            routeInfo = routeTree[routeNumber - 1].info + ' Would you like us to text you additional resources for this route? Just say more info.';
         }
         
         return handlerInput.responseBuilder
             .speak(routeInfo)
-            .reprompt(routeInfo)
+            .reprompt('Try saying more informaion.')
             .getResponse();
     }
 };
@@ -216,7 +216,7 @@ const RequestTextIntentHandler = {
         }
         return handlerInput.responseBuilder
             .speak(confirmation)
-            .reprompt('beep beep.')
+            .reprompt(confirmation)
             .getResponse();
     }
 };
