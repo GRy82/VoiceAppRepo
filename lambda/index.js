@@ -187,6 +187,7 @@ const RouteInfoIntentHandler = {
         
         return handlerInput.responseBuilder
             .speak(routeInfo)
+            .reprompt(routeInfo)
             .getResponse();
     }
 };
@@ -207,14 +208,16 @@ const RequestTextIntentHandler = {
         const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
             sessionAttributes.mobileNumber : null;
         
-        const text = 'Use the following link to see the route demonstrated: ' + routeTree[sessionAttributes.routeNumber - 1].textedUrl;
+        const text = 'Use the following link to see the route demonstrated: ' + routeTree[routeNumber - 1].textedUrl;
         const response = sendText(mobileNumber, text);
         let confirmation = 'The text message has been sent to your mobile number.'
         if (response !== 'success'){
             confirmation = 'Sorry, the text message was not able to be sent.';
         }
         return handlerInput.responseBuilder
-            .speak(confirmation);
+            .speak(confirmation)
+            .reprompt('beep beep.')
+            .getResponse();
     }
 };
 

@@ -153,12 +153,10 @@
                     "name": "RequestTextIntent",
                     "slots": [],
                     "samples": [
-                        "please send me a text",
-                        "please send text",
-                        "send text",
-                        "please text me",
-                        "text",
-                        "text me"
+                        "more information please",
+                        "more info please",
+                        "more information",
+                        "more info"
                     ]
                 }
             ],
