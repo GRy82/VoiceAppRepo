@@ -63,7 +63,7 @@ const CollectPlayerInfoIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'CollectPlayerInfoIntent';
     },
-    async handle(handlerInput){
+    handle(handlerInput){
         const jerseyNumber = handlerInput.requestEnvelope.request.intent.slots.jerseyNumber.value;
         const position = handlerInput.requestEnvelope.request.intent.slots.position.value;
 
@@ -98,22 +98,21 @@ const CollectPlayerMobileNumberIntentHandler = {
         const mobileNumber = handlerInput.requestEnvelope.request.intent.slots.mobileNumber.value;
         
         const attributesManager = handlerInput.attributesManager;
-        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
         
         const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
             sessionAttributes.jerseyNumber : null;
-            
         const position = sessionAttributes.hasOwnProperty('position') ?
             sessionAttributes.position : null;
         
         const playerAttributes = {
             "jerseyNumber": jerseyNumber,
             "position": position,
-            "mobileNumber": mobileNumber
+            "mobileNumber": mobileNumber,
+            "routeNumber": null
         };
         
-        attributesManager.setPersistentAttributes(playerAttributes);
-        await attributesManager.savePersistentAttributes();
+        attributesManager.setSessionAttributes(playerAttributes);
 
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
         const speakOutput = `Your mobile number has been saved. Give me a route to lookup in the route tree.`;
@@ -131,10 +130,9 @@ const RouteLookupIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'RouteLookupIntent';
     },
-    async handle(handlerInput) {
+    handle(handlerInput) {
         const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
         const attributesManager = handlerInput.attributesManager;
-        //const sessionAttributes = await attributesManager.getPersistentAttributes();
         const sessionAttributes = attributesManager.getSessionAttributes();
         
         const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
@@ -154,9 +152,6 @@ const RouteLookupIntentHandler = {
         };
         
         attributesManager.setSessionAttributes(playerAttributes);
-        //attributesManager.setPersistentAttributes(playerAttributes);
-        //await attributesManager.savePersistentAttributes();
-        
 
         const speakReprompt = 'If you want more info, just say yes.';
         const speakOutput = `Route ${routeNumber} is a ${routeTree[routeNumber - 1].name}. Would you like to hear more about this route?`;
