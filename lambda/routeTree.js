@@ -8,7 +8,8 @@
 const routeTree = [
     { 
         name: 'Speed out', 
-        info: 'Take one step forward, then run towards the sideline.' 
+        info: 'Take one step forward, then run towards the sideline.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
     { 
         name: 'Slant', 
@@ -17,31 +18,38 @@ const routeTree = [
     },
     { 
         name: 'Whip', 
-        info: 'Fake a slant route, but instead break outward towards the sideline.' 
+        info: 'Fake a slant route, but instead break outward towards the sideline.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
     { 
         name: 'Drag', 
-        info: 'A drag is similar to a slant, but you will bend your route horizontally across the field. The depth of your route will depend on the depth of linebackers.' 
+        info: 'A drag is similar to a slant, but you will bend your route horizontally across the field. The depth of your route will depend on the depth of linebackers.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
     { 
         name: 'Bench', 
-        info: 'Run eight to ten yards forward, then break outward towards the sideline.' 
+        info: 'Run eight to ten yards forward, then break outward towards the sideline.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
     { 
         name: 'Dig', 
-        info: 'Run eight to ten yards forward, then break inward across the field.' 
+        info: 'Run eight to ten yards forward, then break inward across the field.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
     { 
         name: 'Post corner', 
-        info: 'Run ten to twelve yards forward, and break diagonally upfield and towards the sideline.' 
+        info: 'Run ten to twelve yards forward, and break diagonally upfield and towards the sideline.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
     {
         name: 'Post', 
-        info: 'Run ten to twelve yards forward, and break diagonally upfield and towards the hashes.'  
+        info: 'Run ten to twelve yards forward, and break diagonally upfield and towards the hashes.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY'  
     },
     { 
         name: 'Go Route', 
-        info: 'Run upfield for an over the shoulder pass.' 
+        info: 'Run upfield for an over the shoulder pass.', 
+        textedUrl: 'https://www.youtube.com/watch?v=UO7LgtJRFeY' 
     },
 ]
 

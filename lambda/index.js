@@ -72,14 +72,17 @@ const CollectPlayerInfoIntentHandler = {
         const playerAttributes = {
             "jerseyNumber": jerseyNumber,
             "position": position,
+            "receiveTexts": null,
             "mobileNumber": null,
             "routeNumber": null
         };
         
         attributesManager.setSessionAttributes(playerAttributes);
 
-        const speakReprompt = 'I didn\'t get that. Please repeat your mobile number.';
-        const speakOutput = `Thanks ${position} number ${jerseyNumber}. You will have the option to receive text messages at times when it may be helpful. What is your mobile phone number?`;
+        const speakReprompt = 'Just say yes, no, or never.';//make an intent handler for 'never' in the future that is stored as a preference.
+        const speakOutput = `Thanks ${position} number ${jerseyNumber}. You will have the option to receive text messages 
+                            at times when it may be helpful. Do we have permission to store your mobile number?`;
+                            
         return handlerInput.responseBuilder
             .speak(speakOutput)
             .reprompt(speakReprompt)
@@ -87,6 +90,68 @@ const CollectPlayerInfoIntentHandler = {
     }
 };
 
+const TextPermissionDeniedIntentHandler = {
+    canHandle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ? 
+            sessionAttributes.routeNumber : null;
+        
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' 
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
+            && !routeNumber;
+    },
+    handle(handlerInput){
+        const sessionAttributes = handlerInput.attributesManager.getSessionAttributes();
+        sessionAttributes.receiveTexts = false;
+        handlerInput.attributesManager.setSessionAttributes(sessionAttributes);
+        
+        const speakOutput = 'Not a problem. Give me a route number to look up.';
+        const reprompt = 'I can look up information about a route in the route tree. Just give me the number of that route.';
+        
+        return handlerInput.responseBuilder
+        .speak(speakOutput)
+        .reprompt(reprompt)
+        .getResponse();
+    }
+};
+
+const HasTextPermissionIntentHandler = {
+    canHandle(handlerInput){
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
+        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
+            sessionAttributes.routeNumber : null;
+            
+        return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
+            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent' &&  //create a yes intent
+            !mobileNumber &&
+            !routeNumber;
+    },
+    handle(handlerInput){
+        const receiveTexts = true;
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        const playerAttributes = {
+            "jerseyNumber": sessionAttributes.hasOwnProperty('jerseyNumber') ? sessionAttributes.jerseyNumber : null,
+            "position": sessionAttributes.hasOwnProperty('position') ? sessionAttributes.position : null,
+            "receiveTexts": true,
+            "mobileNumber": null,
+            "routeNumber": null
+        };
+        attributesManager.setSessionAttributes(playerAttributes);
+        
+        const speakOutput = "What is your mobile phone number?";
+        const speakReprompt = 'I didn\'t get that. Please repeat your mobile number.';
+        
+        return handlerInput.responseBuilder
+            .speak(speakOutput)
+            .reprompt(speakReprompt)
+            .getResponse();
+    }
+};
 
 //When setting persistent attributes, it seems to serve as a complete overwrite.
 const CollectPlayerMobileNumberIntentHandler = {
@@ -108,6 +173,7 @@ const CollectPlayerMobileNumberIntentHandler = {
         const playerAttributes = {
             "jerseyNumber": jerseyNumber,
             "position": position,
+            "receiveTexts": true,
             "mobileNumber": mobileNumber,
             "routeNumber": null
         };
@@ -137,16 +203,17 @@ const RouteLookupIntentHandler = {
         
         const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
             sessionAttributes.jerseyNumber : null;
-            
         const position = sessionAttributes.hasOwnProperty('position') ?
             sessionAttributes.position : null;
-            
         const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
             sessionAttributes.mobileNumber : null;
+        const receiveTexts = sessionAttributes.hasOwnProperty('receiveTexts') ?
+            sessionAttributes.receiveTexts : null;
         
         const playerAttributes = {
             "jerseyNumber": jerseyNumber,
             "position": position,
+            "receiveTexts": receiveTexts,
             "mobileNumber": mobileNumber,
             "routeNumber": routeNumber
         };
@@ -165,19 +232,30 @@ const RouteLookupIntentHandler = {
 
 const RouteInfoIntentHandler = {
     canHandle(handlerInput){
+        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
+            sessionAttributes.routeNumber : null;
+            
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent';
+            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent'//create a yes intent.
+            && routeNumber;
     },
     async handle(handlerInput){
         const attributesManager = handlerInput.attributesManager;
         const sessionAttributes = await attributesManager.getPersistentAttributes();
         
-       const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
+        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
             sessionAttributes.routeNumber : null;
+        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
+            sessionAttributes.mobileNumber : null;
+        const receiveTexts = sessionAttributes.hasOwnProperty('receiveTexts') ?
+            sessionAttributes.receiveTexts : null;
         
         let routeInfo = 'Sorry. Something went wrong. Try starting over.';
         if(routeNumber){
-            routeInfo = routeTree[routeNumber - 1].info + ' Would you like us to text you additional resources for this route? Just say more info.';
+            routeInfo = routeTree[routeNumber - 1].info;
+        }
+        if(receiveTexts && mobileNumber){
+            routeInfo += ' Would you like us to text you additional resources for this route? Just say more info.';
         }
         
         return handlerInput.responseBuilder
@@ -240,6 +318,11 @@ const CancelAndStopIntentHandler = {
                 || Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.StopIntent');
     },
     handle(handlerInput) {
+        const attributesManager = handlerInput.attributesManager;
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        sessionAttributes.routeNumber = null;
+        attributesManager.setSessionAttributes(sessionAttributes);
+        
         const speakOutput = 'Goodbye!';
         return handlerInput.responseBuilder
             .speak(speakOutput)
@@ -304,6 +387,9 @@ const GetUserInfoInterceptor = {
             
         const position = sessionAttributes.hasOwnProperty('position') ?
             sessionAttributes.position : null;
+        
+        const receiveTexts = sessionAttributes.hasOwnProperty('receiveTexts') ?
+            sessionAttributes.receiveTexts : null;
             
         const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
             sessionAttributes.mobileNumber : null;
@@ -340,6 +426,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         PossessesUserInfoLaunchRequestHandler,
         LaunchRequestHandler,
         CollectPlayerInfoIntentHandler,
+        TextPermissionDeniedIntentHandler,
+        HasTextPermissionIntentHandler,
         CollectPlayerMobileNumberIntentHandler,
         RouteLookupIntentHandler,
         RouteInfoIntentHandler,
