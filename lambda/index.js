@@ -32,13 +32,10 @@ const PossessesUserInfoLaunchRequestHandler = {
             sessionAttributes.jerseyNumber : 0;
         const position = sessionAttributes.hasOwnProperty('position') ? 
             sessionAttributes.position : null;
-        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
-            sessionAttributes.mobileNumber : null;
 
         return handlerInput.requestEnvelope.request.type === 'LaunchRequest' &&
             jerseyNumber &&
-            position &&
-            mobileNumber;
+            position;
 
     },
     handle(handlerInput){
@@ -74,11 +71,12 @@ const CollectPlayerInfoIntentHandler = {
         
         const playerAttributes = {
             "jerseyNumber": jerseyNumber,
-            "position": position
+            "position": position,
+            "mobileNumber": null,
+            "routeNumber": null
         };
         
-        attributesManager.setPersistentAttributes(playerAttributes);
-        await attributesManager.savePersistentAttributes();
+        attributesManager.setSessionAttributes(playerAttributes);
 
         const speakReprompt = 'I didn\'t get that. Please repeat your mobile number.';
         const speakOutput = `Thanks ${position} number ${jerseyNumber}. You will have the option to receive text messages at times when it may be helpful. What is your mobile phone number?`;
