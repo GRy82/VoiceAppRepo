@@ -136,7 +136,8 @@ const RouteLookupIntentHandler = {
     async handle(handlerInput) {
         const routeNumber = handlerInput.requestEnvelope.request.intent.slots.routeNumber.value;
         const attributesManager = handlerInput.attributesManager;
-        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        //const sessionAttributes = await attributesManager.getPersistentAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
         
         const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
             sessionAttributes.jerseyNumber : null;
@@ -154,8 +155,9 @@ const RouteLookupIntentHandler = {
             "routeNumber": routeNumber
         };
         
-        attributesManager.setPersistentAttributes(playerAttributes);
-        await attributesManager.savePersistentAttributes();
+        attributesManager.setSessionAttributes(playerAttributes);
+        //attributesManager.setPersistentAttributes(playerAttributes);
+        //await attributesManager.savePersistentAttributes();
         
 
         const speakReprompt = 'If you want more info, just say yes.';
@@ -325,6 +327,15 @@ const GetUserInfoInterceptor = {
     }
 };
 
+const SetUserInfoInterceptor = {
+    async process(handlerInput){
+        const attributesManager = handlerInput.attributesManager
+        const sessionAttributes = attributesManager.getSessionAttributes();
+        attributesManager.setPersistentAttributes(sessionAttributes);
+        await attributesManager.savePersistentAttributes();
+    }  
+};
+
 // The SkillBuilder acts as the entry point for your skill, routing all request and response
 // payloads to the handlers above. Make sure any new handlers or interceptors you've
 // defined are included below. The order matters - they're processed top to bottom.
@@ -350,5 +361,8 @@ exports.handler = Alexa.SkillBuilders.custom()
         )
     .addRequestInterceptors(
         GetUserInfoInterceptor
+    )
+    .addResponseInterceptors(
+        SetUserInfoInterceptor
     )
     .lambda();
