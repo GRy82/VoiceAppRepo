@@ -1,5 +1,24 @@
 var messagebird = require('messagebird')('2dXQgA9yZBLcxUiSaKcm3JYNI');//use config module later to store key, no hardcode.
 
+// function sendText(mobileNumber, textedUrl){
+//     var params = {
+//       'originator': 'MessageBird',
+//       'recipients': [
+//         mobileNumber
+//     ],
+//       'body': 'Use the following link to see the route demonstrated: ' + textedUrl
+//     };
+
+//     messagebird.messages.create(params, function (err, response) {
+//       if (err) {
+//         return err;
+//       }
+//       console.log(response);
+//       return 'success';
+//     });
+
+// }
+
 function sendText(mobileNumber, text){
     var params = {
       'originator': 'MessageBird',
@@ -11,12 +30,11 @@ function sendText(mobileNumber, text){
 
     messagebird.messages.create(params, function (err, response) {
       if (err) {
-        return err;
+        return console.log(err);
       }
       console.log(response);
-      return 'success';
     });
-
+    
 }
 
 module.exports = sendText;
