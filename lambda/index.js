@@ -43,8 +43,6 @@ const PossessesUserInfoLaunchRequestHandler = {
             sessionAttributes.jerseyNumber : 0;
         const position = sessionAttributes.hasOwnProperty('position') ? 
             sessionAttributes.position : null;
-        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
-            sessionAttributes.mobileNumber : null;
 
         const speakOutput = `Welcome back ${position} number ${jerseyNumber}. Give me a route number to look up.`
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
@@ -97,7 +95,7 @@ const TextPermissionDeniedIntentHandler = {
             sessionAttributes.routeNumber : null;
         
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest' 
-            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'
+            && Alexa.getIntentName(handlerInput.requestEnvelope) === 'AMAZON.CancelIntent'//consider creating separate intent.
             && !routeNumber;
     },
     handle(handlerInput){
@@ -165,14 +163,9 @@ const CollectPlayerMobileNumberIntentHandler = {
         const attributesManager = handlerInput.attributesManager;
         const sessionAttributes = attributesManager.getSessionAttributes();
         
-        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
-            sessionAttributes.jerseyNumber : null;
-        const position = sessionAttributes.hasOwnProperty('position') ?
-            sessionAttributes.position : null;
-        
         const playerAttributes = {
-            "jerseyNumber": jerseyNumber,
-            "position": position,
+            "jerseyNumber": sessionAttributes.hasOwnProperty('jerseyNumber') ? sessionAttributes.jerseyNumber : null,
+            "position": sessionAttributes.hasOwnProperty('position') ? sessionAttributes.position : null,
             "receiveTexts": true,
             "mobileNumber": mobileNumber,
             "routeNumber": null
@@ -201,20 +194,11 @@ const RouteLookupIntentHandler = {
         const attributesManager = handlerInput.attributesManager;
         const sessionAttributes = attributesManager.getSessionAttributes();
         
-        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
-            sessionAttributes.jerseyNumber : null;
-        const position = sessionAttributes.hasOwnProperty('position') ?
-            sessionAttributes.position : null;
-        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
-            sessionAttributes.mobileNumber : null;
-        const receiveTexts = sessionAttributes.hasOwnProperty('receiveTexts') ?
-            sessionAttributes.receiveTexts : null;
-        
         const playerAttributes = {
-            "jerseyNumber": jerseyNumber,
-            "position": position,
-            "receiveTexts": receiveTexts,
-            "mobileNumber": mobileNumber,
+            "jerseyNumber": sessionAttributes.hasOwnProperty('jerseyNumber') ? sessionAttributes.jerseyNumber : null,
+            "position": sessionAttributes.hasOwnProperty('position') ? sessionAttributes.position : null,
+            "receiveTexts": sessionAttributes.hasOwnProperty('receiveTexts') ? sessionAttributes.receiveTexts : null,
+            "mobileNumber": sessionAttributes.hasOwnProperty('mobileNumber') ? sessionAttributes.mobileNumber : null,
             "routeNumber": routeNumber
         };
         
@@ -381,21 +365,6 @@ const GetUserInfoInterceptor = {
     async process(handlerInput){
         const attributesManager = handlerInput.attributesManager;
         sessionAttributes = await attributesManager.getPersistentAttributes() || {};
-        
-        const jerseyNumber = sessionAttributes.hasOwnProperty('jerseyNumber') ? 
-            sessionAttributes.jerseyNumber : null;
-            
-        const position = sessionAttributes.hasOwnProperty('position') ?
-            sessionAttributes.position : null;
-        
-        const receiveTexts = sessionAttributes.hasOwnProperty('receiveTexts') ?
-            sessionAttributes.receiveTexts : null;
-            
-        const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
-            sessionAttributes.mobileNumber : null;
-            
-        const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
-            sessionAttributes.routeNumber : null;
          
         // catch(error){
         //     if (error.name !== 'ServiceError') 
