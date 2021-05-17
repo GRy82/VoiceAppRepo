@@ -49,7 +49,7 @@ const PossessesUserInfoLaunchRequestHandler = {
         const mobileNumber = sessionAttributes.hasOwnProperty('mobileNumber') ?
             sessionAttributes.mobileNumber : null;
 
-        const speakOutput = `Welcome back ${position} number ${jerseyNumber} number ${mobileNumber}. Give me a route number to look up.`
+        const speakOutput = `Welcome back ${position} number ${jerseyNumber}. Give me a route number to look up.`
         const speakReprompt = 'As an example, if you ask me what route number nine is, I will tell you it\'s a go route.';
 
         return handlerInput.responseBuilder
@@ -321,12 +321,7 @@ const GetUserInfoInterceptor = {
         //         return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
         // }
 
-        if(jerseyNumber && position && mobileNumber && routeNumber){
-            attributesManager.setSessionAttributes(sessionAttributes);
-        }
-        else if(jerseyNumber && position && mobileNumber && routeNumber){
-            attributesManager.setSessionAttributes(sessionAttributes);
-        }
+        attributesManager.setSessionAttributes(sessionAttributes);
     }
 };
 
