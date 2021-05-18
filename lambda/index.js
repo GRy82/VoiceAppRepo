@@ -223,9 +223,9 @@ const RouteInfoIntentHandler = {
             && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent'//create a yes intent.
             && routeNumber;
     },
-    async handle(handlerInput){
+    handle(handlerInput){
         const attributesManager = handlerInput.attributesManager;
-        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
         
         const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
             sessionAttributes.routeNumber : null;
@@ -255,9 +255,9 @@ const RequestTextIntentHandler = {
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
             && handlerInput.requestEnvelope.request.intent.name === 'RequestTextIntent';
     },
-    async handle(handlerInput){
+    handle(handlerInput){
         const attributesManager = handlerInput.attributesManager;
-        const sessionAttributes = await attributesManager.getPersistentAttributes();
+        const sessionAttributes = attributesManager.getSessionAttributes();
         
         const routeNumber = sessionAttributes.hasOwnProperty('routeNumber') ?
             sessionAttributes.routeNumber : null;
