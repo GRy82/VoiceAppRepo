@@ -363,15 +363,16 @@ const ErrorHandler = {
 
 const GetUserInfoInterceptor = {
     async process(handlerInput){
-        const attributesManager = handlerInput.attributesManager;
-        sessionAttributes = await attributesManager.getPersistentAttributes() || {};
-         
-        // catch(error){
-        //     if (error.name !== 'ServiceError') 
-        //         return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
-        // }
+        try{
+            const attributesManager = handlerInput.attributesManager;
+            sessionAttributes = await attributesManager.getPersistentAttributes() || {};
+            attributesManager.setSessionAttributes(sessionAttributes);
+        }
+        catch(error){
+            if (error.name !== 'ServiceError') 
+                return handlerInput.responseBuilder.speak("There was a problem connecting to the service.").getResponse();
+        }
 
-        attributesManager.setSessionAttributes(sessionAttributes);
     }
 };
 
