@@ -124,7 +124,7 @@ const HasTextPermissionIntentHandler = {
             sessionAttributes.routeNumber : null;
             
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent' &&  //create a yes intent
+            && handlerInput.requestEnvelope.request.intent.name === 'YesIntent' &&  //create a yes intent
             !mobileNumber &&
             !routeNumber;
     },
@@ -220,7 +220,7 @@ const RouteInfoIntentHandler = {
             sessionAttributes.routeNumber : null;
             
         return Alexa.getRequestType(handlerInput.requestEnvelope) === 'IntentRequest'
-            && handlerInput.requestEnvelope.request.intent.name === 'RouteInfoIntent'//create a yes intent.
+            && handlerInput.requestEnvelope.request.intent.name === 'YesIntent'
             && routeNumber;
     },
     handle(handlerInput){
